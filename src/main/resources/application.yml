@@ -1,0 +1,8 @@
+server:
+  port: 9980
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
