@@ -6,3 +6,9 @@ management:
     web:
       exposure:
         include: '*'
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
