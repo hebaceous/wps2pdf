@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import javax.servlet.http.HttpServletResponse
+import java.util.concurrent.TimeUnit
 
 @Controller
 @RequestMapping
@@ -24,7 +25,7 @@ class Controller {
         val suffix = filename.substring(lastDotIndex)
         val tempWordFile = Files.createTempFile(null, suffix).toFile()
         word.transferTo(tempWordFile)
-        val pdfFile = WPS.word2pdf(tempWordFile)
+        val pdfFile = WPS.word2pdf(tempWordFile).get(1, TimeUnit.MINUTES)
         logger.info("word2pdf:[{}]->[{}]", tempWordFile.absolutePath, pdfFile.absolutePath)
         response.outputStream.write(pdfFile.readBytes())
     }

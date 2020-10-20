@@ -5,9 +5,14 @@ import com.jacob.com.Dispatch
 
 import java.io.File
 import java.nio.file.Files
+import java.util.concurrent.Executors
+import java.util.concurrent.FutureTask
 
 object WPS {
-  fun word2pdf(word: File): File {
+
+  private val executorService = Executors.newCachedThreadPool()
+
+  private fun doWord2pdf(word: File): File {
     val pdf = Files.createTempFile(null, ".pdf").toFile()
     val app = ActiveXComponent("Word.Application")
     try {
@@ -23,6 +28,12 @@ object WPS {
       app.invoke("Quit", 0)
     }
     return pdf
+  }
+
+  fun word2pdf(word: File): FutureTask<File> {
+    val futureTask = FutureTask<File> { doWord2pdf(word) }
+    executorService.submit(futureTask)
+    return futureTask
   }
 
 }
