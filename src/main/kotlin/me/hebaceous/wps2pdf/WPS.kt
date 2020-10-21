@@ -7,6 +7,7 @@ import java.io.File
 import java.nio.file.Files
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
+import java.util.concurrent.TimeUnit
 
 object WPS {
 
@@ -30,10 +31,15 @@ object WPS {
     return pdf
   }
 
-  fun word2pdf(word: File): FutureTask<File> {
-    val futureTask = FutureTask<File> { doWord2pdf(word) }
-    executorService.submit(futureTask)
-    return futureTask
+  fun word2pdf(word: File): File {
+    val future = FutureTask<File> { doWord2pdf(word) }
+    executorService.submit(future)
+    try {
+      return future.get(30, TimeUnit.SECONDS)
+    } catch (e: Exception) {
+      future.cancel(true)
+      throw RuntimeException(e)
+    }
   }
 
 }
